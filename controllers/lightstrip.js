@@ -19,6 +19,34 @@ for (var i=0; i<256; i++) {
   GAMMA[i] = (0x80 | Math.floor(Math.pow(i / 255, 2.5) * 127 + 0.5)).toString(16);
 };
 
+// Adapted from Partik Gosar, http://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately#comment24984878_17242144
+// h,s,v are all in range [0,1]
+function HSVtoRGBBuffer(h, s, v) {
+  var r, g, b, i, f, p, q, t;
+  if (h && s === undefined && v === undefined) {
+    s = h.s, v = h.v, h = h.h;
+  }
+  i = Math.floor(h * 6);
+  f = h * 6 - i;
+  p = v * (1 - s);
+  q = v * (1 - f * s);
+  t = v * (1 - (1 - f) * s);
+  switch (i % 6) {
+    case 0: r = v, g = t, b = p; break;
+    case 1: r = q, g = v, b = p; break;
+    case 2: r = p, g = v, b = t; break;
+    case 3: r = p, g = q, b = v; break;
+    case 4: r = t, g = p, b = v; break;
+    case 5: r = v, g = p, b = q; break;
+  }
+  var grb = new Buffer(3);
+  grb.write('' +
+            (GAMMA[ Math.floor(g * 255) ] || '00') +
+            (GAMMA[ Math.floor(r * 255) ] || '00') +
+            (GAMMA[ Math.floor(b * 255) ] || '00'), 'hex');
+  return grb;
+}
+
 /**
  * {WritableStream} SPI device data stream
  */
@@ -28,9 +56,16 @@ var RESET = new Buffer(1); // TODO: may need more reset bytes for longer strips,
 RESET.write('00', 'hex');
 
 exports.open = function(callback) {
+  callback = callback || function(error, results) {
+    if (error)
+      console.log("ERROR opening SPI:", error);
+    else
+      console.log("READY: " + results);
+  };
   SPI = fs.createWriteStream('/dev/spidev0.0', {flags: 'w', encoding: 'ascii'});
   callback = _.once(callback || function() {});
   SPI.once('open', function() {
+    SPI.write(RESET); // start it
     callback(null, 'lightstrip ready', SPI);
   });
   SPI.once('error', function(e) {
@@ -67,3 +102,12 @@ exports.rgb = function(r,g,b) {
   SPI.write(grb);
 };
 
+/**
+ * Send a HSV for the next pixel
+ * @param {number} hue 0-1, 0 and 1 is red
+ * @param {number} saturation 0-1, 0 for white/grey, 1 for full hue
+ * @param {number} value (blackness) 0-1, 0 for off, 1 for full intensity
+ */
+exports.hsv = function(h, s, v) {
+  SPI.write(HSVtoRGBBuffer(h, s, v));
+};
