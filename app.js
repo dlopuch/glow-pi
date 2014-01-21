@@ -23,13 +23,22 @@ app.use(require('less-middleware')({ src: path.join(__dirname, 'public') }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
-if ('development' == app.get('env')) {
+if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 
 // Initiate routes and controllers
 require('./routes')(app);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+require('./controllers/lightstrip').open(function(error, results) {
+  if (error) {
+    console.log('ERROR: Could not initiate lightstrip controller: ', error);
+    return process.exit(1);
+  }
+
+  require('./controllers/patterns').load('rainbow');
+
+  http.createServer(app).listen(app.get('port'), function(){
+    console.log('Express server listening on port ' + app.get('port'));
+  });
 });
