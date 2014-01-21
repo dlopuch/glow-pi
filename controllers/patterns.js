@@ -94,6 +94,9 @@ PATTERNS.rain = new function() {
     hues = new Array(NUM_PIXELS);
     whites = new Array(NUM_PIXELS);
     vals = new Array(NUM_PIXELS);
+    for (var i=0; i<NUM_PIXELS; i++) {
+      hues[i] = {sum: 0, num: 0};
+    }
     drops = {};
     console.log("Can you feel the rain?");
     new Drop();
@@ -101,7 +104,8 @@ PATTERNS.rain = new function() {
 
   this.tick = function() {
     for (var i=0; i<NUM_PIXELS; i++) {
-      hues[i] = {sum: 0, num: 0};
+      hues[i].sum = 0;
+      hues[i].num = 0;
       whites[i] = 0;
       vals[i] = 0;
     }
@@ -109,7 +113,7 @@ PATTERNS.rain = new function() {
     // Randomly add a drop, on average every second
     if (Math.random() < 1/TICK_INTERVAL/1) {
       new Drop(); // self-registers into drops.
-      console.log('plop! (' + Object.keys(drops).length + ' drops)');
+      //console.log('plop! (' + Object.keys(drops).length + ' drops)');
     }
 
     var dropIds = Object.keys(drops);
