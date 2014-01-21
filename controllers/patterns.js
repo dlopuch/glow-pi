@@ -13,8 +13,10 @@ var NUM_PIXELS = 32,
 var activePattern;
 
 setInterval(function tickPattern() {
+  if (!activePattern) return;
+
   ls.next();
-  activePattern.tick();
+  activePattern.tick.call(activePattern);
 }, TICK_INTERVAL);
 
 exports.load = function(patternName) {
@@ -88,7 +90,7 @@ PATTERNS.rain = new function() {
 
   this.init = function() {
     hues = new Array(NUM_PIXELS);
-    sats = new Array(NUM_PIXELS);
+    whites = new Array(NUM_PIXELS);
     vals = new Array(NUM_PIXELS);
     drops = {};
     console.log("Can you feel the rain?");
