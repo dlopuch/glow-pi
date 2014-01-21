@@ -44,7 +44,7 @@ PATTERNS.rain = new function() {
       HUE_VARIANCE = 0.1,
 
       // Drop decays all its "white" in .3 seconds
-      WHITE_DECAY = .25 / TICK_INTERVAL,
+      WHITE_DECAY = 1 / TICK_INTERVAL / .3,
 
       // Drop decays away in 1 sec
       BRIGHTNESS_DECAY = 1 / TICK_INTERVAL,
@@ -72,7 +72,8 @@ PATTERNS.rain = new function() {
             if (i < 0 || i >= NUM_PIXELS)
               continue;
 
-            hues[i] += hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
+            hues[i].sum += hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
+            hues[i].num++; // number of contributing pixels (for averaging)
             whites[i] += whiteness;
             vals[i] += val;
           }
@@ -100,13 +101,13 @@ PATTERNS.rain = new function() {
 
   this.tick = function() {
     for (var i=0; i<NUM_PIXELS; i++) {
-      hues[i] = 0;
+      hues[i] = {sum: 0, num: 0};
       whites[i] = 0;
       vals[i] = 0;
     }
 
     // Randomly add a drop, on average every second
-    if (Math.random() < 1/TICK_INTERVAL/1.5) {
+    if (Math.random() < 1/TICK_INTERVAL/1) {
       new Drop(); // self-registers into drops.
       console.log('plop! (' + Object.keys(drops).length + ' drops)');
     }
@@ -119,7 +120,7 @@ PATTERNS.rain = new function() {
 
     // Canvas is now painted.  Average hues, max the rest.
     for (i=0; i<NUM_PIXELS; i++) {
-      ls.hsv( hues[i] / dropIds.length,
+      ls.hsv( hues[i].num ? hues[i].sum / hues[i].num : 0,
               Math.max(0, 1 - whites[i]),
               Math.min(1, vals[i]) );
     }
