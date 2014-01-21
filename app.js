@@ -36,7 +36,7 @@ require('./controllers/lightstrip').open(function(error, results) {
     return process.exit(1);
   }
 
-  require('./controllers/patterns').load('rainbow');
+  require('./controllers/patterns').load('rain');
 
   http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
