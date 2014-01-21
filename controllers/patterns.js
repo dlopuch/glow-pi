@@ -13,8 +13,10 @@ var NUM_PIXELS = 32,
 var activePattern;
 
 setInterval(function tickPattern() {
+  if (!activePattern) return;
+
   ls.next();
-  activePattern.tick();
+  activePattern.tick.call(activePattern);
 }, TICK_INTERVAL);
 
 exports.load = function(patternName) {
@@ -36,3 +38,119 @@ PATTERNS.rainbow = new function() {
     startHue += hueIncrement % 1.0;
   };
 };
+
+PATTERNS.rain = new function() {
+  var BASE_HUE = 0.7,
+      HUE_VARIANCE = 0.1,
+
+      // Drop decays all its "white" in .3 seconds
+      WHITE_DECAY = 1 / TICK_INTERVAL / .3,
+
+      // Drop decays away in 1 sec
+      BRIGHTNESS_DECAY = 1 / TICK_INTERVAL,
+
+      // Raindrop spreads 6 pixels / second
+      SPREAD_RATE = 6 / TICK_INTERVAL;
+
+  var hues, whites, vals,
+      drops = {},
+      dropId = 0,
+      Drop = function() {
+        var pixelI = Math.floor( Math.random() * NUM_PIXELS ),
+            whiteness = 1, // 1-sat, start white
+            val = 1, // start full brightness
+            hue = BASE_HUE + (Math.random() * HUE_VARIANCE * 2 - HUE_VARIANCE),
+            width = 1;
+
+        // Register this drop
+        this.dropId = dropId++;
+        drops[this.dropId] = this;
+
+        this.tick = function() {
+          // Add colors to canvas
+          for (var i = Math.ceil(pixelI - width); i < pixelI + width; i++) {
+            if (i < 0 || i >= NUM_PIXELS)
+              continue;
+
+            hues[i].sum += hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
+            hues[i].num++; // number of contributing pixels (for averaging)
+            whites[i] += whiteness;
+            vals[i] += val;
+          }
+
+          // Decay
+          whiteness = Math.max(0, whiteness - WHITE_DECAY);
+          val = Math.max(0, val - BRIGHTNESS_DECAY);
+          width += SPREAD_RATE;
+
+          if (val === 0) {
+            // We've decayed away.  Goodbye!
+            delete drops[this.dropId];
+          }
+        };
+      };
+
+  this.init = function() {
+    hues = new Array(NUM_PIXELS);
+    whites = new Array(NUM_PIXELS);
+    vals = new Array(NUM_PIXELS);
+    for (var i=0; i<NUM_PIXELS; i++) {
+      hues[i] = {sum: 0, num: 0};
+    }
+    drops = {};
+    console.log("Can you feel the rain?");
+    new Drop();
+  };
+
+  this.tick = function() {
+    for (var i=0; i<NUM_PIXELS; i++) {
+      hues[i].sum = 0;
+      hues[i].num = 0;
+      whites[i] = 0;
+      vals[i] = 0;
+    }
+
+    // Randomly add a drop, on average every second
+    if (Math.random() < 1/TICK_INTERVAL/1) {
+      new Drop(); // self-registers into drops.
+      //console.log('plop! (' + Object.keys(drops).length + ' drops)');
+    }
+
+    var dropIds = Object.keys(drops);
+    dropIds.forEach(function(dropId) {
+      drops[dropId].tick();
+      // Drops remove themselves when they're decayed
+    });
+
+    // Canvas is now painted.  Average hues, max the rest.
+    for (i=0; i<NUM_PIXELS; i++) {
+      ls.hsv( hues[i].num ? hues[i].sum / hues[i].num : 0,
+              Math.max(0, 1 - whites[i]),
+              Math.min(1, vals[i]) );
+    }
+  };
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
