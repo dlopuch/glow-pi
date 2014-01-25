@@ -40,8 +40,8 @@ PATTERNS.rainbow = new function() {
 };
 
 PATTERNS.rain = new function() {
-  var BASE_HUE = 0.7,
-      HUE_VARIANCE = 0.1,
+  var BASE_HUE = 0.65,
+      HUE_VARIANCE = 0.3,
 
       // Drop decays all its "white" in .3 seconds
       WHITE_DECAY = 1 / TICK_INTERVAL / .3,
@@ -110,8 +110,8 @@ PATTERNS.rain = new function() {
       vals[i] = 0;
     }
 
-    // Randomly add a drop, on average every second
-    if (Math.random() < 1/TICK_INTERVAL/1) {
+    // Randomly add a drop, on average every 1.5 second
+    if (Math.random() < 1.5/TICK_INTERVAL) {
       new Drop(); // self-registers into drops.
       //console.log('plop! (' + Object.keys(drops).length + ' drops)');
     }
