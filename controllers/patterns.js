@@ -29,6 +29,10 @@ exports.load = function(patternId) {
   activePattern.init();
 };
 
+exports.getActivePattern = function() {
+  return activePattern ? activePattern.id : null;
+};
+
 /**
  * List of available patterns.  Each pattern will be an Object: {
  *   id: {string} internal pattern name, to be fed into load()
@@ -38,6 +42,20 @@ exports.load = function(patternId) {
 exports.PATTERNS_LIST = [];
   // Will get initialized at the end of the file.  Just make sure you add patterns to PATTERNS, and
   // add a this.friendlyName
+
+
+/**
+ * PATTERN DEFINITIONS
+ * -----------------------
+ * To add a new patterns, add it to the PATTERNS object.  The PATTERNS key at which you put it will be the pattern's id.
+ *
+ * A pattern must have the following attributes:
+ *   id: {string} (Reserved attribute... will be filled in with the PATTERN key at which you defined it)
+ *   friendlyName: {string} The friendly name of the pattern
+ *   init: {function()} Initializing function that will be called when your pattern is loaded
+ *   tick: {function()} Do your pattern's lightstrip API calls here.  Gets called right after a ls.next().  Gets called
+ *                      every TICK_INTERVAL ms.
+ */
 
 PATTERNS.rainbow = new function() {
   this.friendlyName = "Taste the Rainbow";
