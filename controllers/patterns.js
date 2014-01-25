@@ -65,30 +65,30 @@ PATTERNS.rain = new function() {
         // Register this drop
         this.dropId = dropId++;
         drops[this.dropId] = this;
-
-        this.tick = function() {
-          // Add colors to canvas
-          for (var i = Math.ceil(pixelI - width); i < pixelI + width; i++) {
-            if (i < 0 || i >= NUM_PIXELS)
-              continue;
-
-            hues[i].sum += hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
-            hues[i].num++; // number of contributing pixels (for averaging)
-            whites[i] += whiteness;
-            vals[i] += val;
-          }
-
-          // Decay
-          whiteness = Math.max(0, whiteness - WHITE_DECAY);
-          val = Math.max(0, val - BRIGHTNESS_DECAY);
-          width += SPREAD_RATE;
-
-          if (val === 0) {
-            // We've decayed away.  Goodbye!
-            delete drops[this.dropId];
-          }
-        };
       };
+
+  Drop.prototype.tick = function() {
+    // Add colors to canvas
+    for (var i = Math.ceil(pixelI - width); i < pixelI + width; i++) {
+      if (i < 0 || i >= NUM_PIXELS)
+        continue;
+
+      hues[i].sum += hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
+      hues[i].num++; // number of contributing pixels (for averaging)
+      whites[i] += whiteness;
+      vals[i] += val;
+    }
+
+    // Decay
+    whiteness = Math.max(0, whiteness - WHITE_DECAY);
+    val = Math.max(0, val - BRIGHTNESS_DECAY);
+    width += SPREAD_RATE;
+
+    if (val === 0) {
+      // We've decayed away.  Goodbye!
+      delete drops[this.dropId];
+    }
+  };
 
   this.init = function() {
     hues = new Array(NUM_PIXELS);
