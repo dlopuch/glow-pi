@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <title>glow-pi<%= title ? ': ' + title : '' %></title>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
   </head>
   <body>
-    <h1>glow-pi</h1>
-    <p>Welcome to glow-pi!</p>
+    <div class='container'>
+      <h1>glow-pi</h1>
+      <div id="quick-patterns" class="btn-group-vertical btn-group-lg" data-toggle="buttons">
+        <% for (var i=0; i < quickPatterns.length; i++) { %>
+          <label class="btn btn-default">
+            <input type='radio' name='pattern' value="<%= quickPatterns[i].id %>"><%= quickPatterns[i].friendlyName %>
+          </label>
+        <% } %>
+      </div>
+
+    </div>
   </body>
 </html>

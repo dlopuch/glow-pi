@@ -1,5 +1,5 @@
 
-var user = require('./user');
+var patternController = require('../controllers/patterns');
 
 var index;
 
@@ -9,10 +9,12 @@ var index;
  */
 module.exports = function(app) {
   app.get('/', index);
-  app.get('/users', user.list);
 };
 
 
 index = function(req, res){
-  res.render('index', { title: 'glow-pi' });
+  res.render('index',
+             { title: 'Yayyy colors!',
+               quickPatterns: patternController.PATTERNS_LIST
+             });
 };
