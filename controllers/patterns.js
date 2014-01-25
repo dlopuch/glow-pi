@@ -56,11 +56,11 @@ PATTERNS.rain = new function() {
       drops = {},
       dropId = 0,
       Drop = function() {
-        var pixelI = Math.floor( Math.random() * NUM_PIXELS ),
-            whiteness = 1, // 1-sat, start white
-            val = 1, // start full brightness
-            hue = BASE_HUE + (Math.random() * HUE_VARIANCE * 2 - HUE_VARIANCE),
-            width = 1;
+        this.pixelI = Math.floor( Math.random() * NUM_PIXELS );
+        this.whiteness = 1, // 1-sat, start white
+        this.val = 1, // start full brightness
+        this.hue = BASE_HUE + (Math.random() * HUE_VARIANCE * 2 - HUE_VARIANCE),
+        this.width = 1;
 
         // Register this drop
         this.dropId = dropId++;
@@ -69,22 +69,22 @@ PATTERNS.rain = new function() {
 
   Drop.prototype.tick = function() {
     // Add colors to canvas
-    for (var i = Math.ceil(pixelI - width); i < pixelI + width; i++) {
+    for (var i = Math.ceil(this.pixelI - this.width); i < this.pixelI + this.width; i++) {
       if (i < 0 || i >= NUM_PIXELS)
         continue;
 
-      hues[i].sum += hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
+      hues[i].sum += this.hue; // will get averaged   TODO: average doesn't wrap around <0 or >1
       hues[i].num++; // number of contributing pixels (for averaging)
-      whites[i] += whiteness;
-      vals[i] += val;
+      whites[i] += this.whiteness;
+      vals[i] += this.val;
     }
 
     // Decay
-    whiteness = Math.max(0, whiteness - WHITE_DECAY);
-    val = Math.max(0, val - BRIGHTNESS_DECAY);
-    width += SPREAD_RATE;
+    this.whiteness = Math.max(0, this.whiteness - WHITE_DECAY);
+    this.val = Math.max(0, this.val - BRIGHTNESS_DECAY);
+    this.width += SPREAD_RATE;
 
-    if (val === 0) {
+    if (this.val === 0) {
       // We've decayed away.  Goodbye!
       delete drops[this.dropId];
     }
