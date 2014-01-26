@@ -34,8 +34,9 @@ $.get('/api/activePattern')
 });
 
 // Whenever a pattern is clicked: post the active pattern
-$('input.pattern').closest('label').click(function(e) {
-  if (e.noUpdateActivePattern)
+$('input.pattern').closest('label').click(function(e, opts) {
+  // Prevent infinite trigger loops
+  if (opts && opts.noUpdateActivePattern)
     return;
 
   var newPattern = $(e.target).find('input.pattern').val();
