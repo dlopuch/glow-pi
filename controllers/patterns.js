@@ -185,7 +185,7 @@ PATTERNS.bananas = new function() {
   this.init = function() {
     offset = 0;
     bananas = true;
-    blickTickCount = 0;
+    blinkTickCount = 0;
   };
 
   this.tick = function() {
@@ -195,15 +195,15 @@ PATTERNS.bananas = new function() {
         ls.hsv(0,0,0);
 
       } else if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) <= BANANA_WIDTH) {
-        ls.hsv(.3, 1, 1);
+        ls.hsv(.16, 1, 1);
       } else {
         ls.hsv(0,0,0);
       }
     }
 
-    blinkCount++;
-    if (blinkCount > TICK_INTERVAL * .7) {
-      blinkCount = 0;
+    blinkTickCount++;
+    if (blinkTickCount > TICK_INTERVAL * .1) {
+      blinkTickCount = 0;
       offset++;
       bananas = !bananas;
     }
