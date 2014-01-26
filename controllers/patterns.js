@@ -180,7 +180,8 @@ PATTERNS.bananas = new function() {
 
   var offset = 0,
       bananas = true,
-      blinkTickCount = 0;
+      blinkTickCount = 0,
+      bananaHue;
 
   this.init = function() {
     offset = 0;
@@ -193,9 +194,17 @@ PATTERNS.bananas = new function() {
       // bananas off this frame
       if (!bananas) {
         ls.hsv(0,0,0);
+        continue;
+      }
 
-      } else if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) <= BANANA_WIDTH) {
-        ls.hsv(.16, 1, 1);
+      // If we're starting a new banana, randomize its color
+      if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) === 0) {
+        // .13 is a very ripe orange, .19 is a very unripe almost green
+        bananaHue = .6 + Math.random() * .06 - .03;
+      }
+
+      if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) <= BANANA_WIDTH) {
+        ls.hsv(bananaHue, 1, 1);
       } else {
         ls.hsv(0,0,0);
       }
