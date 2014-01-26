@@ -30,11 +30,19 @@ if ('development' === app.get('env')) {
 // Initiate routes and controllers
 require('./routes')(app);
 
+// http.createServer(app).listen(app.get('port'), function(){
+  // console.log('Express server listening on port ' + app.get('port'));
+// });
+// console.log("HEYDAN! Lightstrip controller not engaged");
+
+console.log('Initializing lightstrip controller...');
 require('./controllers/lightstrip').open(function(error, results) {
   if (error) {
     console.log('ERROR: Could not initiate lightstrip controller: ', error);
     return process.exit(1);
   }
+
+  console.log("Lightstrip engaged!");
 
   require('./controllers/patterns').load('rain');
 

@@ -4,7 +4,8 @@
  * Various lightstrip patterns to play
  */
 
-var ls = require('./lightstrip');
+var _ = require('lodash'),
+    ls = require('./lightstrip');
 
 var NUM_PIXELS = 32,
     TICK_INTERVAL = 33, // ~30 FPS
@@ -19,12 +20,47 @@ setInterval(function tickPattern() {
   activePattern.tick.call(activePattern);
 }, TICK_INTERVAL);
 
-exports.load = function(patternName) {
-  activePattern = PATTERNS[patternName] || PATTERNS['rainbow'];
+/**
+ * Load up and run a pattern
+ * @param {string} patternId
+ */
+exports.load = function(patternId) {
+  activePattern = PATTERNS[patternId] || PATTERNS['rainbow'];
   activePattern.init();
 };
 
+exports.getActivePattern = function() {
+  return activePattern ? activePattern.id : null;
+};
+
+/**
+ * List of available patterns.  Each pattern will be an Object: {
+ *   id: {string} internal pattern name, to be fed into load()
+ *   friendlyName: {string} User-facing pattern name
+ * }
+ */
+exports.PATTERNS_LIST = [];
+  // Will get initialized at the end of the file.  Just make sure you add patterns to PATTERNS, and
+  // add a this.friendlyName
+
+
+/**
+ * PATTERN DEFINITIONS
+ * -----------------------
+ * To add a new patterns, add it to the PATTERNS object.  The PATTERNS key at which you put it will be the pattern's id.
+ *
+ * A pattern must have the following attributes:
+ *   id: {string} (Reserved attribute... will be filled in with the PATTERN key at which you defined it)
+ *   friendlyName: {string} The friendly name of the pattern
+ *   init: {function()} Initializing function that will be called when your pattern is loaded
+ *   tick: {function()} Do your pattern's lightstrip API calls here.  Gets called right after a ls.next().  Gets called
+ *                      every TICK_INTERVAL ms.
+ */
+
 PATTERNS.rainbow = new function() {
+  this.friendlyName = "Taste the Rainbow";
+  this.sortI = 0;
+
   var startHue,
       hueIncrement = 1 / TICK_INTERVAL; // 1 second --> 1 full cycle
   this.init = function() {
@@ -40,6 +76,9 @@ PATTERNS.rainbow = new function() {
 };
 
 PATTERNS.rain = new function() {
+  this.friendlyName = "Digital Rain";
+  this.sortI = 1;
+
   var BASE_HUE = 0.65,
       HUE_VARIANCE = 0.3,
 
@@ -133,6 +172,15 @@ PATTERNS.rain = new function() {
 
 
 
+// Initialize patterns list
+_.sortBy(_.pairs(PATTERNS).map(function(p) { p[1].id = p[0]; return p[1]; }),
+         'sortI')
+.forEach(function(p) {
+  exports.PATTERNS_LIST.push({
+    id: p.id,
+    friendlyName: p.friendlyName
+  });
+});
 
 
 

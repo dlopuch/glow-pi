@@ -1,18 +1,35 @@
 
-var user = require('./user');
+var patternController = require('../controllers/patterns');
 
-var index;
+var renderHTML,
+    getActivePattern,
+    setActivePattern;
 
 /**
  * DI wrapper
  * @param {Express} app
  */
 module.exports = function(app) {
-  app.get('/', index);
-  app.get('/users', user.list);
+  app.get('/', renderHTML);
+
+  app.get('/api/activePattern', getActivePattern);
+
+  app.post('/api/activePattern', setActivePattern);
 };
 
 
-index = function(req, res){
-  res.render('index', { title: 'glow-pi' });
+renderHTML = function(req, res){
+  res.render('index',
+             { title: 'Yayyy colors!',
+               quickPatterns: patternController.PATTERNS_LIST
+             });
+};
+
+getActivePattern = function(req, res) {
+  res.json(200, {activePattern: patternController.getActivePattern()});
+};
+
+setActivePattern = function(req, res) {
+  patternController.load(req.body.activePattern);
+  res.json(200, {activePattern: patternController.getActivePattern()});
 };
