@@ -52,6 +52,7 @@ exports.PATTERNS_LIST = [];
  * A pattern must have the following attributes:
  *   id: {string} (Reserved attribute... will be filled in with the PATTERN key at which you defined it)
  *   friendlyName: {string} The friendly name of the pattern
+ *   sortI: {number} The order in which the pattern appears on the web UI
  *   init: {function()} Initializing function that will be called when your pattern is loaded
  *   tick: {function()} Do your pattern's lightstrip API calls here.  Gets called right after a ls.next().  Gets called
  *                      every TICK_INTERVAL ms.
@@ -166,6 +167,45 @@ PATTERNS.rain = new function() {
       ls.hsv( hues[i].num ? hues[i].sum / hues[i].num : 0,
               Math.max(0, 1 - whites[i]),
               Math.min(1, vals[i]) );
+    }
+  };
+};
+
+PATTERNS.bananas = new function() {
+  this.friendlyName = "Bojangles's Bananas";
+  this.sortI = 2;
+
+  var BANANA_WIDTH = 3,
+      GAP_WIDTH = 4;
+
+  var offset = 0,
+      bananas = true,
+      blinkTickCount = 0;
+
+  this.init = function() {
+    offset = 0;
+    bananas = true;
+    blickTickCount = 0;
+  };
+
+  this.tick = function() {
+    for (var i=0; i<NUM_PIXELS; i++) {
+      // bananas off this frame
+      if (!bananas) {
+        ls.hsv(0,0,0);
+
+      } else if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) <= BANANA_WIDTH) {
+        ls.hsv(.3, 1, 1);
+      } else {
+        ls.hsv(0,0,0);
+      }
+    }
+
+    blinkCount++;
+    if (blinkCount > TICK_INTERVAL * .7) {
+      blinkCount = 0;
+      offset++;
+      bananas = !bananas;
     }
   };
 };
