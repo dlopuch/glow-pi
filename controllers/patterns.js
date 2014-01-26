@@ -109,7 +109,7 @@ PATTERNS.bananas = new function() {
         bananaHue = .16 + Math.random() * .06 - .03;
       }
 
-      if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) <= BANANA_WIDTH) {
+      if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) < BANANA_WIDTH) {
         ls.hsv(bananaHue, 1, 1);
       } else {
         ls.hsv(0,0,0);
