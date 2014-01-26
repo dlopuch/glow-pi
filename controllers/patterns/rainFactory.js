@@ -11,7 +11,8 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
    *   hueVariance: {number} 0-1.  Raindrops will be a random color +/- this amount from the baseHue.  Again, wrap
    *                arounds are buggy, don't do baseHue - variance < 0 or > 1.  TODO.
    *   baseAsBackground: {boolean} True to make the background the baseHue, false to leave the background black/off
-   *   whiteDecaySec: {number} How many seconds for a raindrop's white flash to decay (default .3)
+   *   whiteDecaySec: {number} How many seconds for a raindrop's white flash to decay.
+   *                  Defaults to 0.3, set to 0 (===0) to turn off white flashes
    *   decay: {number} How many seconds it takes a raindrop to decay (default 1)
    *   spreadRate: {number} How many pixels/sec the raindrop spreads across (default 6).  Stops spreading after decay.
    *   rainFrequencySec: {number} Number of seconds between rain on average (defaults drop every 1.5 sec)
@@ -39,7 +40,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
           dropId = 0,
           Drop = function() {
             this.pixelI = Math.floor( Math.random() * NUM_PIXELS );
-            this.whiteness = 1, // 1-sat, start white
+            this.whiteness = opts.whiteDecaySec === 0 ? 0 : 1, // 1-sat, start white
             this.val = 1, // start full brightness
             this.hue = BASE_HUE + (Math.random() * HUE_VARIANCE * 2 - HUE_VARIANCE),
             this.width = 1;

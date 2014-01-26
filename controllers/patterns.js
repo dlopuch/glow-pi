@@ -144,6 +144,15 @@ PATTERNS.pulseGreen = rainFactory({
   friendlyName: "Green Pulse",
   sortI: 4,
   baseAsBackground: true,
+  baseHue: .3,
+  hueVariance: .15,
+  whiteDecay: 0
+});
+
+PATTERNS.pulseAqua = rainFactory({
+  friendlyName: "Aqua Pulse",
+  sortI: 4,
+  baseAsBackground: true,
   baseHue: .5,
   hueVariance: .15,
   whiteDecay: 0
