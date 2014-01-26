@@ -8,12 +8,13 @@
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 
     <script type="text/javascript" src="/javascripts/api.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   </head>
   <body>
     <div class='container'>
       <h1>glow-pi</h1>
       <div id="quick-patterns-init">Loading....</div>
-      <div style="display:none;" id="quick-patterns" class="btn-group-vertical btn-group-lg" data-toggle="buttons">
+      <div style="display:none" id="quick-patterns" class="btn-group-vertical btn-group-lg" data-toggle="buttons">
         <% for (var i=0; i < quickPatterns.length; i++) { %>
           <label class="btn btn-default">
             <input type='radio' class='pattern' name='pattern' value="<%= quickPatterns[i].id %>"><%= quickPatterns[i].friendlyName %>
