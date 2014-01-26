@@ -9,11 +9,12 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
    *   baseHue: {number} 0-1, the base hue from which raindrops are randomized.  Be caseful around the limits -- colors
    *            don't wrap wrap around yet.
    *   hueVariance: {number} 0-1.  Raindrops will be a random color +/- this amount from the baseHue.  Again, wrap
-   *                arounds are buggy
+   *                arounds are buggy, don't do baseHue - variance < 0 or > 1.  TODO.
    *   baseAsBackground: {boolean} True to make the background the baseHue, false to leave the background black/off
    *   whiteDecaySec: {number} How many seconds for a raindrop's white flash to decay (default .3)
    *   decay: {number} How many seconds it takes a raindrop to decay (default 1)
    *   spreadRate: {number} How many pixels/sec the raindrop spreads across (default 6).  Stops spreading after decay.
+   *   rainFrequencySec: {number} Number of seconds between rain on average (defaults drop every 1.5 sec)
    */
   return function(opts) {
     opts = opts || {};
@@ -25,7 +26,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
           HUE_VARIANCE = opts.hueVariance || 0.3,
 
           // Drop decays all its "white" in .3 seconds
-          WHITE_DECAY = 1 / (TICK_INTERVAL * (opts.whiteDecaySec || .3)),
+          WHITE_DECAY = opts.whiteDecaySec === 0 ? Infinity : 1 / (TICK_INTERVAL * (opts.whiteDecaySec || .3)),
 
           // Drop decays away in 1 sec
           BRIGHTNESS_DECAY = 1 / (TICK_INTERVAL * (opts.decay || 1)),
@@ -79,7 +80,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
           hues[i] = {sum: 0, num: 0};
         }
         drops = {};
-        console.log("Can you feel the rain?");
+        console.log("Can you feel the (" + this.friendlyName + ") rain?");
         new Drop();
       };
 
@@ -92,7 +93,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
         }
 
         // Randomly add a drop, on average every 1.5 second
-        if (Math.random() < 1.5/TICK_INTERVAL) {
+        if (Math.random() < (opts.rainFrequencySec || 1.5) / TICK_INTERVAL) {
           new Drop(); // self-registers into drops.
           //console.log('plop! (' + Object.keys(drops).length + ' drops)');
         }

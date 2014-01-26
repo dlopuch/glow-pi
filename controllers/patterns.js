@@ -131,13 +131,40 @@ PATTERNS.rain = rainFactory({
   sortI: 2,
 });
 
-PATTERNS.orange = rainFactory({
-  friendlyName: "Orange Haze",
+PATTERNS.pulseOrange = rainFactory({
+  friendlyName: "Orange Pulse",
   sortI: 3,
   baseAsBackground: true,
   baseHue: .13,
   hueVariance: .13,
-  whiteDecay: .1
+  whiteDecay: 0
+});
+
+PATTERNS.pulseGreen = rainFactory({
+  friendlyName: "Green Pulse",
+  sortI: 4,
+  baseAsBackground: true,
+  baseHue: .5,
+  hueVariance: .15,
+  whiteDecay: 0
+});
+
+PATTERNS.pulseBlue = rainFactory({
+  friendlyName: "Blue Pulse",
+  sortI: 5,
+  baseAsBackground: true,
+  baseHue: .7,
+  hueVariance: .15,
+  whiteDecay: 0
+});
+
+PATTERNS.pulsePurple = rainFactory({
+  friendlyName: "Purple Pulse",
+  sortI: 6,
+  baseAsBackground: true,
+  baseHue: .85,
+  hueVariance: .14,
+  whiteDecay: 0
 });
 
 // Initialize patterns list
