@@ -10,7 +10,7 @@ var NUM_PIXELS = 32,
 
 var _ = require('lodash'),
     ls = require('./lightstrip'),
-    rainFactory = require('./patterns/rainFactory')(NUM_PIXELS, TICK_INTERVAL);
+    rainFactory = require('./patterns/rainFactory')(NUM_PIXELS, TICK_INTERVAL, ls);
 
 var activePattern;
 

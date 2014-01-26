@@ -1,5 +1,5 @@
 // DI Wrapper
-module.exports = function(NUM_PIXELS, TICK_INTERVAL) {
+module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
 
   /**
    * Factory to produce a new "Rain" pattern
