@@ -25,13 +25,29 @@ $('input.pattern').closest('label').click(function(e) {
   $(e.target).closest('label').addClass('btn-primary');
 });
 
+var lastPattern;
+
 // Initial page load: Select the active pattern
 $.get('/api/activePattern')
 .done(function(results) {
   $('#quick-patterns-init').hide();
   $('#quick-patterns').show();
+  lastPattern = results.activePattern;
   selectPattern(results.activePattern);
 });
+
+// Party mode: different people may be changing patterns simultaneously.
+// Poll server every second or so for changes, and update UI if someone else changed it.
+// TODO: Replace with socket.io
+setInterval(function() {
+  $.get('/api/activePattern')
+  .done(function(results) {
+    if (results.activePattern !== lastPattern) {
+      lastPattern = results.activePattern;
+      selectPattern(results.activePattern);
+    }
+  });
+}, 1000);
 
 // Whenever a pattern is clicked: post the active pattern
 $('input.pattern').closest('label').click(function(e, opts) {
