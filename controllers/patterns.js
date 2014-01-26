@@ -200,7 +200,7 @@ PATTERNS.bananas = new function() {
       // If we're starting a new banana, randomize its color
       if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) === 0) {
         // .13 is a very ripe orange, .19 is a very unripe almost green
-        bananaHue = .6 + Math.random() * .06 - .03;
+        bananaHue = .16 + Math.random() * .06 - .03;
       }
 
       if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) <= BANANA_WIDTH) {
