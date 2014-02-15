@@ -22,6 +22,12 @@ for (var i=0; i<256; i++) {
 // Adapted from Partik Gosar, http://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately#comment24984878_17242144
 // h,s,v are all in range [0,1]
 function HSVtoRGBBuffer(h, s, v) {
+  h = h % 1;
+  if (h < 0) {
+    h = 1 + h;
+    console.log('h is: ' + h);
+  }
+
   var r, g, b, i, f, p, q, t;
   if (h && s === undefined && v === undefined) {
     s = h.s, v = h.v, h = h.h;

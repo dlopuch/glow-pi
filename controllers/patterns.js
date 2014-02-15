@@ -131,9 +131,18 @@ PATTERNS.rain = rainFactory({
   sortI: 2,
 });
 
+PATTERNS.pulseRed = rainFactory({
+  friendlyName: "Red Pulse",
+  sortI: 3,
+  baseAsBackground: true,
+  baseHue: .95,
+  hueVariance: .05,
+  whiteDecay: 0
+});
+
 PATTERNS.pulseOrange = rainFactory({
   friendlyName: "Orange Pulse",
-  sortI: 3,
+  sortI: 4,
   baseAsBackground: true,
   baseHue: .13,
   hueVariance: .13,
@@ -142,7 +151,7 @@ PATTERNS.pulseOrange = rainFactory({
 
 PATTERNS.pulseGreen = rainFactory({
   friendlyName: "Green Pulse",
-  sortI: 4,
+  sortI: 5,
   baseAsBackground: true,
   baseHue: .3,
   hueVariance: .15,
@@ -151,7 +160,7 @@ PATTERNS.pulseGreen = rainFactory({
 
 PATTERNS.pulseAqua = rainFactory({
   friendlyName: "Aqua Pulse",
-  sortI: 4,
+  sortI: 6,
   baseAsBackground: true,
   baseHue: .5,
   hueVariance: .15,
@@ -160,7 +169,7 @@ PATTERNS.pulseAqua = rainFactory({
 
 PATTERNS.pulseBlue = rainFactory({
   friendlyName: "Blue Pulse",
-  sortI: 5,
+  sortI: 7,
   baseAsBackground: true,
   baseHue: .7,
   hueVariance: .15,
@@ -169,7 +178,7 @@ PATTERNS.pulseBlue = rainFactory({
 
 PATTERNS.pulsePurple = rainFactory({
   friendlyName: "Purple Pulse",
-  sortI: 6,
+  sortI: 8,
   baseAsBackground: true,
   baseHue: .85,
   hueVariance: .14,
