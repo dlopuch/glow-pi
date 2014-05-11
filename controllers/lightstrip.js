@@ -87,11 +87,11 @@ exports.open = function(callback) {
     waitForDrain = false;
   });
 
-  SPI.lossyWrite = function(buffer) {
+  SPI.lossyWrite = function(buffer, callback) {
     if (waitForDrain)
       return false;
 
-    var completed = SPI.write(buffer);
+    var completed = SPI.write(buffer, callback);
     if (!completed) {
       skippingFrame = true; // ignore future pixel writes until backpressure is resolved
       waitForDrain = true;
@@ -105,6 +105,8 @@ exports.close = function(callback) {
 };
 
 
+var prevResetFlushed = true;
+
 /**
  * Start the next line of pixels / reset the frame
  */
@@ -116,7 +118,16 @@ exports.next = function() {
     return;
   }
 
-  SPI.lossyWrite(RESET);
+  prevResetFlushed = false;
+  SPI.lossyWrite(RESET, function() {
+    if (!prevResetFlushed) {
+      skippingFrame = true;
+      console.log('lightstrip: Warning! Backpressure starting to build up!  Skipping next frame');
+    } else {
+      prevResetFlushed = true;
+    }
+
+  });
 };
 
 /**
