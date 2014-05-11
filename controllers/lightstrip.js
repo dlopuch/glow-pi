@@ -58,7 +58,7 @@ function HSVtoRGBBuffer(h, s, v) {
  */
 var SPI,
     waitForDrain = false,
-    unlockFrame = false;
+    skippingFrame = false;
 
 var RESET = new Buffer(1); // TODO: may need more reset bytes for longer strips, see arduino source
 RESET.write('00', 'hex');
@@ -91,6 +91,7 @@ exports.open = function(callback) {
 
     var completed = realWrite.call(SPI, buffer);
     if (!completed) {
+      skippingFrame = true; // ignore future pixel writes until backpressure is resolved
       waitForDrain = true;
     }
     return completed;
@@ -106,6 +107,13 @@ exports.close = function(callback) {
  * Start the next line of pixels / reset the frame
  */
 exports.next = function() {
+  skippingFrame = waitForDrain;
+
+  if (skippingFrame) {
+    console.log('lightstrip: SPI buffer clogged, dropping next frame.');
+    return;
+  }
+
   SPI.write(RESET);
 };
 
@@ -121,10 +129,15 @@ exports.next = function() {
  * @param {number} b Blue,  0-255
  */
 exports.rgb = function(r,g,b) {
+  if (skippingFrame) {
+    console.log('lightstrip: Dropped frame, ignoring RGB');
+    return;
+  }
+
   var grb = new Buffer(3);
   grb.write('' + (GAMMA[g] || '00') + (GAMMA[r] || '00') + (GAMMA[b] || '00'), 'hex');
   if (!SPI.write(grb)) {
-    console.log('SPI: RGB buffer full, back off!');
+    console.log('lightstrip: SPI: RGB buffer full, back off!');
   }
 };
 
@@ -135,7 +148,12 @@ exports.rgb = function(r,g,b) {
  * @param {number} value (blackness) 0-1, 0 for off, 1 for full intensity
  */
 exports.hsv = function(h, s, v) {
+  if (skippingFrame) {
+    console.log('lightstrip: Dropped frame, ignoring HSV');
+    return;
+  }
+
   if (!SPI.write(HSVtoRGBBuffer(h, s, v))) {
-    console.log('SPI: HSV buffer full, back off!');
+    console.log('lightstrip: SPI: HSV buffer full, back off!');
   }
 };
