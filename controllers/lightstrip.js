@@ -56,7 +56,9 @@ function HSVtoRGBBuffer(h, s, v) {
 /**
  * {WritableStream} SPI device data stream
  */
-var SPI;
+var SPI,
+    waitForDrain = false,
+    unlockFrame = false;
 
 var RESET = new Buffer(1); // TODO: may need more reset bytes for longer strips, see arduino source
 RESET.write('00', 'hex');
@@ -79,7 +81,20 @@ exports.open = function(callback) {
   });
   SPI.on('drain', function(e) {
     console.log('SPI buffer drained.');
+    waitForDrain = false;
   });
+
+  var realWrite = SPI.write;
+  SPI.write = function(buffer) {
+    if (waitForDrain)
+      return false;
+
+    var completed = realWrite(buffer);
+    if (!completed) {
+      waitForDrain = true;
+    }
+    return completed;
+  };
 };
 
 exports.close = function(callback) {
@@ -109,7 +124,7 @@ exports.rgb = function(r,g,b) {
   var grb = new Buffer(3);
   grb.write('' + (GAMMA[g] || '00') + (GAMMA[r] || '00') + (GAMMA[b] || '00'), 'hex');
   if (!SPI.write(grb)) {
-    console.log('SPI: RGB Data not written, back off!');
+    console.log('SPI: RGB buffer full, back off!');
   }
 };
 
@@ -121,6 +136,6 @@ exports.rgb = function(r,g,b) {
  */
 exports.hsv = function(h, s, v) {
   if (!SPI.write(HSVtoRGBBuffer(h, s, v))) {
-    console.log('SPI: HSV Data not written, back off!');
+    console.log('SPI: HSV buffer full, back off!');
   }
 };
