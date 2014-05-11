@@ -105,7 +105,10 @@ exports.close = function(callback) {
 };
 
 
-var prevResetFlushed = true;
+var numUnflushedResets = 0,
+    flushResetCb = function() {
+      numUnflushedResets--;
+    };
 
 /**
  * Start the next line of pixels / reset the frame
@@ -115,19 +118,17 @@ exports.next = function() {
 
   if (skippingFrame) {
     console.log('lightstrip: SPI buffer clogged, dropping next frame.');
-    return;
+    return false;
   }
 
-  prevResetFlushed = false;
-  SPI.lossyWrite(RESET, function() {
-    if (!prevResetFlushed) {
-      skippingFrame = true;
-      console.log('lightstrip: Warning! Backpressure starting to build up!  Skipping next frame');
-    } else {
-      prevResetFlushed = true;
-    }
+  if (numUnflushedResets > 0) {
+    skippingFrame = true;
+    console.log('lightstrip: Warning! Backpressure starting to build up!  Skipping next frame');
+    return false;
+  }
 
-  });
+  numUnflushedResets++;
+  SPI.lossyWrite(RESET, flushResetCb);
 };
 
 /**
