@@ -89,7 +89,7 @@ exports.open = function(callback) {
     if (waitForDrain)
       return false;
 
-    var completed = realWrite(buffer);
+    var completed = realWrite.call(SPI, buffer);
     if (!completed) {
       waitForDrain = true;
     }
