@@ -79,17 +79,19 @@ exports.open = function(callback) {
   SPI.once('error', function(e) {
     callback(e);
   });
+  SPI.on('error', function(e) {
+    console.log("SPI error!", e.toString());
+  });
   SPI.on('drain', function(e) {
-    console.log('SPI buffer drained.');
+    console.log('SPI buffer drained!!!');
     waitForDrain = false;
   });
 
-  var realWrite = SPI.write;
-  SPI.write = function(buffer) {
+  SPI.lossyWrite = function(buffer) {
     if (waitForDrain)
       return false;
 
-    var completed = realWrite.call(SPI, buffer);
+    var completed = SPI.write(buffer);
     if (!completed) {
       skippingFrame = true; // ignore future pixel writes until backpressure is resolved
       waitForDrain = true;
@@ -114,7 +116,7 @@ exports.next = function() {
     return;
   }
 
-  SPI.write(RESET);
+  SPI.lossyWrite(RESET);
 };
 
 /**
@@ -130,13 +132,13 @@ exports.next = function() {
  */
 exports.rgb = function(r,g,b) {
   if (skippingFrame) {
-    console.log('lightstrip: Dropped frame, ignoring RGB');
+    //console.log('lightstrip: Dropped frame, ignoring RGB');
     return;
   }
 
   var grb = new Buffer(3);
   grb.write('' + (GAMMA[g] || '00') + (GAMMA[r] || '00') + (GAMMA[b] || '00'), 'hex');
-  if (!SPI.write(grb)) {
+  if (!SPI.lossyWrite(grb)) {
     console.log('lightstrip: SPI: RGB buffer full, back off!');
   }
 };
@@ -149,11 +151,11 @@ exports.rgb = function(r,g,b) {
  */
 exports.hsv = function(h, s, v) {
   if (skippingFrame) {
-    console.log('lightstrip: Dropped frame, ignoring HSV');
+    //console.log('lightstrip: Dropped frame, ignoring HSV');
     return;
   }
 
-  if (!SPI.write(HSVtoRGBBuffer(h, s, v))) {
+  if (!SPI.lossyWrite(HSVtoRGBBuffer(h, s, v))) {
     console.log('lightstrip: SPI: HSV buffer full, back off!');
   }
 };
