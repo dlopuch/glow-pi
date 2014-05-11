@@ -77,6 +77,9 @@ exports.open = function(callback) {
   SPI.once('error', function(e) {
     callback(e);
   });
+  SPI.on('drain', function(e) {
+    console.log('SPI buffer drained.');
+  });
 };
 
 exports.close = function(callback) {
@@ -105,7 +108,9 @@ exports.next = function() {
 exports.rgb = function(r,g,b) {
   var grb = new Buffer(3);
   grb.write('' + (GAMMA[g] || '00') + (GAMMA[r] || '00') + (GAMMA[b] || '00'), 'hex');
-  SPI.write(grb);
+  if (!SPI.write(grb)) {
+    console.log('SPI: RGB Data not written, back off!');
+  }
 };
 
 /**
@@ -115,5 +120,7 @@ exports.rgb = function(r,g,b) {
  * @param {number} value (blackness) 0-1, 0 for off, 1 for full intensity
  */
 exports.hsv = function(h, s, v) {
-  SPI.write(HSVtoRGBBuffer(h, s, v));
+  if (!SPI.write(HSVtoRGBBuffer(h, s, v))) {
+    console.log('SPI: HSV Data not written, back off!');
+  }
 };
