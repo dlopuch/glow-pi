@@ -23,7 +23,6 @@ setInterval(function tickPattern() {
   var startTick = Date.now();
   activePattern.tick.call(activePattern);
 
-  console.log("Tick!", (Date.now() - lastTick), (startTick - start), (Date.now() - startTick));
   lastTick = Date.now();
 }, TICK_INTERVAL);
 
