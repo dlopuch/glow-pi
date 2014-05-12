@@ -14,11 +14,16 @@ var _ = require('lodash'),
 
 var activePattern;
 
+var lastTick = Date.now();
 setInterval(function tickPattern() {
   if (!activePattern) return;
 
+  var start = Date.now();
   ls.next();
+  var startTick = Date.now();
   activePattern.tick.call(activePattern);
+
+  lastTick = Date.now();
 }, TICK_INTERVAL);
 
 /**
