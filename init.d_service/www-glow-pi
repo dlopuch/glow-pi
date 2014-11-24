@@ -1,0 +1,48 @@
+#! /bin/sh
+# /etc/init.d/www-glow-pi
+#
+
+# This is a service to start up the node app using npm forever on a rasberrypi Rasbian environment
+# Save this file as /etc/init.d/www-glow-pi
+# Taken from: http://alfredkam.com/using-git-hooks-to-deploy-server-with-forever/
+
+NAME=www-glow-pi
+APP=app.js
+APP_DIR=/home/pi/www-glow-pi
+forever=/usr/local/bin/forever
+export PATH=$PATH:/usr/local/bin/
+LOG=/var/log/www-glow-pi.log
+
+case "$1" in
+  start)
+    cd $APP_DIR
+    echo "Starting $NAME"
+
+    # I detached the message to 'screen', it is not a requirement
+    # WARNING: This sends all node.js output to $LOG, which may be too much for raspi's SD card
+    #screen -d -m /usr/bin/sudo -u pi sudo $forever --minUptime 5000 --spinSleepTime 2000 -a -l $LOG start $APP
+    
+    # Alternative is to just start it up and have the output go into the ether
+    sudo -u pi sudo $forever --minUptime 5000 --spinSleepTime 2000 -a start $APP
+    
+    echo "Started $Name"
+    exit 0
+    ;;
+  stop)
+    echo "Stopping script $NAME"
+    cd $APP_DIR
+    /usr/bin/sudo -u pi sudo $forever stop $APP
+    exit 0
+    ;;
+  list)
+    echo "List"
+    /usr/bin/sudo -u pi $forever list
+    exit 0
+    ;;
+  *)
+    echo "Usage: /etc/init.d/www-glow-pi {start|stop|list}"
+    exit 1
+    ;;
+esac
+
+exit 0
