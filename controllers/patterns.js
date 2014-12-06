@@ -10,20 +10,17 @@ var NUM_PIXELS = 32,
 
 var _ = require('lodash'),
     ls = require('./lightstrip'),
-    rainFactory = require('./patterns/rainFactory')(NUM_PIXELS, TICK_INTERVAL, ls);
+    rainFactory = require('./patterns/rainFactory')(NUM_PIXELS, TICK_INTERVAL, ls),
+    BlackBodyRain = require('./patterns/BlackBodyRain')(NUM_PIXELS, TICK_INTERVAL, ls);
 
 var activePattern;
 
-var lastTick = Date.now();
 setInterval(function tickPattern() {
   if (!activePattern) return;
 
-  var start = Date.now();
   ls.next();
-  var startTick = Date.now();
   activePattern.tick.call(activePattern);
 
-  lastTick = Date.now();
 }, TICK_INTERVAL);
 
 /**
@@ -80,7 +77,7 @@ PATTERNS.rainbow = new function() {
     }
     startHue += hueIncrement % 1.0;
   };
-};
+}();
 
 PATTERNS.bananas = new function() {
   this.friendlyName = "Bojangles's Bananas";
@@ -128,7 +125,7 @@ PATTERNS.bananas = new function() {
       bananas = !bananas;
     }
   };
-};
+}();
 
 
 PATTERNS.rain = rainFactory({
@@ -188,6 +185,11 @@ PATTERNS.pulsePurple = rainFactory({
   baseHue: .85,
   hueVariance: .14,
   whiteDecay: 0
+});
+
+PATTERNS.blackBodyRain = new BlackBodyRain({
+  friendlyName: 'Black Body Rain',
+  sortI: 9
 });
 
 // Initialize patterns list

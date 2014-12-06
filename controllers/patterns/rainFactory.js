@@ -112,7 +112,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
                   Math.min(1, vals[i]) );
         }
       };
-    };
+    }();
   };
 
 };
