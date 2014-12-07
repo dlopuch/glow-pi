@@ -12,6 +12,9 @@
 
 var _ = require('lodash');
 
+var HIGH_TEMP = 20000,
+    LOW_TEMP = 1000;
+
 /**
  * See http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
  * @param {number} temperature Color temperature in degrees K, somewhere between 1000 and 40,000
@@ -54,30 +57,112 @@ function colorTemperatureToRGB(temperature) {
 
 
 // DI Wrapper
-module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
+module.exports = function(NUM_PIXELS, TICK_INTERVAL_MS, ls) {
+
+  var dropI = 0;
 
   function BlackBodyRain(opts) {
     opts = _.defaults(opts || {}, {
       friendlyName: 'Black Body Rain',
-      sortI: 10
+      sortI: 10,
+
+      // How long a drop exists for
+      // (temperature decays from 20k to 1k duration this period)
+      dropDurationSec: 1.5,
+
+      // Number of pixels/second the drop expands left or right
+      dropSpreadRate: 4,
+
+      // A new drop appears, on average, at this frequency (eg new drop every 1.5 sec)
+      rainFrequencySec: 1.5
     });
+
+    // Calculate temperature decay / tick
+    opts._temperatureDecay = (HIGH_TEMP - LOW_TEMP) / (opts.dropDurationSec * 1000 / TICK_INTERVAL_MS);
+
+    // Convert pixels/second to pixels/tick
+    opts._dropSpreadRate = opts.dropSpreadRate * (TICK_INTERVAL_MS / 1000);
 
     this.friendlyName = opts.friendlyName;
     this.sortI = opts.sortI;
+    this.options = opts;
+
+    var dropRegistry = this.dropRegistry = {},
+        temperatureCanvas = this.temperatureCanvas = new Array(NUM_PIXELS);
+
+    /**
+     * A Drop splashes a decaying temperature across an ever-widening area of the temperature canvas.
+     *
+     * In other words, on the first tick the Drop applies a high temperature to a single pixel.  Over subsequent ticks,
+     * the Drop applies its temperature to more pixels (keeps widening).  As it widens, the temperature it applies gets
+     * warmer and warmer (lower and lower).
+     *
+     * On creation, the Drop automatically registers itself in the dropRegistry.  When it fully decays, it removes
+     * itself.  This allows iteration of all active drops, with decay logic fully encapsulated inside the Drop.
+     */
+    function Drop(startingPixel) {
+      this.temp = HIGH_TEMP;
+      this.pixelI = Math.floor(Math.random() * NUM_PIXELS);
+      this.width = 0; // How many pixels it covers left or right of origin pixelI
+
+      // Register this drop
+      this.dropId = ++dropI;
+      dropRegistry['' + this.dropId] = this;
+    }
+    Drop.prototype.tick = function() {
+      // Add this Drop's temperature to the canvas
+      for (var i = Math.ceil(this.pixelI - this.width); i < this.pixelI + this.width; i++) {
+        if (i < 0 || i >= NUM_PIXELS)
+          continue;
+
+        temperatureCanvas[i] = (temperatureCanvas[i] || 0) + this.temp;
+      }
+
+      // Decay
+      this.width += opts._dropSpreadRate;
+      this.temp -= opts._temperatureDecay;
+
+      // We've decayed away.  Goodbye!
+      if (this.temp < LOW_TEMP) {
+        delete dropRegistry['' + this.dropId];
+      }
+    };
+    this.Drop = Drop;
   }
 
   BlackBodyRain.prototype.init = function() {
-    this.temp = 20000;
+    for (var k in this.dropRegistry) {
+      delete this.dropRegistry[k];
+    }
   };
 
   BlackBodyRain.prototype.tick = function() {
-    this.temp -= 100;
-
-    if (this.temp < 1000)
-      this.temp = 20000;
-
-    var rgb = colorTemperatureToRGB(this.temp);
+    // reset the temperature canvas
     for (var i=0; i<NUM_PIXELS; i++) {
+      this.temperatureCanvas[k] = null;
+    }
+
+    // Randomly add a drop, on average every 1.5 sec
+    if (Math.random() < (this.options.rainFrequencySec || 1.5) / TICK_INTERVAL) {
+      new Drop(); // self-registers into dropRegistry.
+      //console.log('plop! (' + Object.keys(this.dropRegistry).length + ' drops)');
+    }
+
+    // Tick each drop and let them add their temperature to the temperature canvas
+    _(this.dropRegistry).values().forEach(function(drop) {
+      drop.tick();
+      // Drops remove themselves when they're decayed
+    });
+
+
+    // Canvas is now painted.  Convert to RGB.
+    for (i=0; i<NUM_PIXELS; i++) {
+      if (!this.temperatureCanvas[i]) {
+        ls.rgb(0,0,0);
+        continue;
+      }
+
+      var rgb = colorTemperatureToRGB( Math.min(this.temperatureCanvas[i], HIGH_TEMP*2) );
       ls.rgb(rgb.r, rgb.g, rgb.b);
     }
   };
