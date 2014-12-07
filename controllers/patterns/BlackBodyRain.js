@@ -139,12 +139,12 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL_MS, ls) {
   BlackBodyRain.prototype.tick = function() {
     // reset the temperature canvas
     for (var i=0; i<NUM_PIXELS; i++) {
-      this.temperatureCanvas[k] = null;
+      this.temperatureCanvas[i] = null;
     }
 
     // Randomly add a drop, on average every 1.5 sec
-    if (Math.random() < (this.options.rainFrequencySec || 1.5) / TICK_INTERVAL) {
-      new Drop(); // self-registers into dropRegistry.
+    if (Math.random() < (this.options.rainFrequencySec || 1.5) / TICK_INTERVAL_MS) {
+      new this.Drop(); // self-registers into dropRegistry.
       //console.log('plop! (' + Object.keys(this.dropRegistry).length + ' drops)');
     }
 

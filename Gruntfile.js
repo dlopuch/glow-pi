@@ -6,7 +6,12 @@ module.exports = function(grunt) {
     jshint: {
       all: ['app.js', 'controllers/**/*.js', 'routes/**/*.js', 'public/javascripts/**/*.js'],
       options: {
-        'supernew': true
+        'supernew': true,
+        'undef': true,
+
+        // globals:
+        'jquery': true,
+        'node': true
       }
     }
   });
