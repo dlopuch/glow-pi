@@ -14,5 +14,9 @@
     "lodash": "*",
     "jshint": "1.1.0",
     "winston": "*"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.10.0"
   }
 }
