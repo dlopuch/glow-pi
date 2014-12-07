@@ -13,7 +13,7 @@
 var _ = require('lodash');
 
 var HIGH_TEMP = 20000,
-    LOW_TEMP = 1000;
+    LOW_TEMP = 500;
 
 /**
  * See http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/

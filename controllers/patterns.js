@@ -192,11 +192,11 @@ PATTERNS.blackBodyRain = new BlackBodyRain({
   sortI: 9
 });
 
-PATTERNS.blackBodyRain = new BlackBodyRain({
+PATTERNS.fastBlackBodyRain = new BlackBodyRain({
   friendlyName: 'Fast Black Body Rain',
   sortI: 10,
-  dropDurationSec: 1,
-  dropSpreadRate: 6
+  dropDurationSec: 0.8,
+  dropSpreadRate: 8
 });
 
 // Initialize patterns list
