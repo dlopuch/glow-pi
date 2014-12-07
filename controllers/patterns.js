@@ -192,6 +192,13 @@ PATTERNS.blackBodyRain = new BlackBodyRain({
   sortI: 9
 });
 
+PATTERNS.blackBodyRain = new BlackBodyRain({
+  friendlyName: 'Fast Black Body Rain',
+  sortI: 10,
+  dropDurationSec: 1,
+  dropSpreadRate: 6
+});
+
 // Initialize patterns list
 _.sortBy(_.pairs(PATTERNS).map(function(p) { p[1].id = p[0]; return p[1]; }),
          'sortI')
