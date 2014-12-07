@@ -27,7 +27,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
           HUE_VARIANCE = opts.hueVariance || 0.3,
 
           // Drop decays all its "white" in .3 seconds
-          WHITE_DECAY = opts.whiteDecaySec === 0 ? Infinity : 1 / (TICK_INTERVAL * (opts.whiteDecaySec || .3)),
+          WHITE_DECAY = opts.whiteDecaySec === 0 ? Infinity : 1 / (TICK_INTERVAL * (opts.whiteDecaySec || 0.3)),
 
           // Drop decays away in 1 sec
           BRIGHTNESS_DECAY = 1 / (TICK_INTERVAL * (opts.decay || 1)),
@@ -40,9 +40,9 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
           dropId = 0,
           Drop = function() {
             this.pixelI = Math.floor( Math.random() * NUM_PIXELS );
-            this.whiteness = opts.whiteDecaySec === 0 ? 0 : 1, // 1-sat, start white
-            this.val = 1, // start full brightness
-            this.hue = BASE_HUE + (Math.random() * HUE_VARIANCE * 2 - HUE_VARIANCE),
+            this.whiteness = opts.whiteDecaySec === 0 ? 0 : 1; // 1-sat, start white
+            this.val = 1; // start full brightness
+            this.hue = BASE_HUE + (Math.random() * HUE_VARIANCE * 2 - HUE_VARIANCE);
             this.width = 1;
 
             // Register this drop
@@ -90,7 +90,7 @@ module.exports = function(NUM_PIXELS, TICK_INTERVAL, ls) {
           hues[i].sum = opts.baseAsBackground ? BASE_HUE : 0;
           hues[i].num = opts.baseAsBackground ? 1 : 0;
           whites[i] = 0;
-          vals[i] = opts.baseAsBackground ? .3 : 0;
+          vals[i] = opts.baseAsBackground ? 0.3 : 0;
         }
 
         // Randomly add a drop, on average every 1.5 second

@@ -32,7 +32,7 @@ var fs = require('fs'),
 var GAMMA = new Array(256);
 for (var i=0; i<256; i++) {
   GAMMA[i] = (0x80 | Math.floor(Math.pow(i / 255, 2.5) * 127 + 0.5)).toString(16);
-};
+}
 
 // Adapted from Partik Gosar, http://stackoverflow.com/questions/17242144/javascript-convert-hsb-hsv-color-to-rgb-accurately#comment24984878_17242144
 // h,s,v are all in range [0,1]
@@ -45,7 +45,9 @@ function HSVtoRGBBuffer(h, s, v) {
 
   var r, g, b, i, f, p, q, t;
   if (h && s === undefined && v === undefined) {
-    s = h.s, v = h.v, h = h.h;
+    s = h.s;
+    v = h.v;
+    h = h.h;
   }
   i = Math.floor(h * 6);
   f = h * 6 - i;
@@ -53,12 +55,12 @@ function HSVtoRGBBuffer(h, s, v) {
   q = v * (1 - f * s);
   t = v * (1 - (1 - f) * s);
   switch (i % 6) {
-    case 0: r = v, g = t, b = p; break;
-    case 1: r = q, g = v, b = p; break;
-    case 2: r = p, g = v, b = t; break;
-    case 3: r = p, g = q, b = v; break;
-    case 4: r = t, g = p, b = v; break;
-    case 5: r = v, g = p, b = q; break;
+    case 0: r = v; g = t; b = p; break;
+    case 1: r = q; g = v; b = p; break;
+    case 2: r = p; g = v; b = t; break;
+    case 3: r = p; g = q; b = v; break;
+    case 4: r = t; g = p; b = v; break;
+    case 5: r = v; g = p; b = q; break;
   }
   var grb = new Buffer(3);
   grb.write('' +

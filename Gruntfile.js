@@ -4,7 +4,10 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
-      all: ['app.js', 'controllers/**/*.js', 'routes/**/*.js', 'public/javascripts/**/*.js']
+      all: ['app.js', 'controllers/**/*.js', 'routes/**/*.js', 'public/javascripts/**/*.js'],
+      options: {
+        'supernew': true
+      }
     }
   });
 

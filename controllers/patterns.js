@@ -28,7 +28,7 @@ setInterval(function tickPattern() {
  * @param {string} patternId
  */
 exports.load = function(patternId) {
-  activePattern = PATTERNS[patternId] || PATTERNS['rainbow'];
+  activePattern = PATTERNS[patternId] || PATTERNS.rainbow;
   activePattern.init();
 };
 
@@ -108,7 +108,7 @@ PATTERNS.bananas = new function() {
       // If we're starting a new banana, randomize its color
       if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) === 0) {
         // .13 is a very ripe orange, .19 is a very unripe almost green
-        bananaHue = .16 + Math.random() * .06 - .03;
+        bananaHue = 0.16 + Math.random() * 0.06 - 0.03;
       }
 
       if ((offset + i) % (BANANA_WIDTH + GAP_WIDTH) < BANANA_WIDTH) {
@@ -119,7 +119,7 @@ PATTERNS.bananas = new function() {
     }
 
     blinkTickCount++;
-    if (blinkTickCount > TICK_INTERVAL * .1) {
+    if (blinkTickCount > TICK_INTERVAL * 0.1) {
       blinkTickCount = 0;
       offset++;
       bananas = !bananas;
@@ -137,8 +137,8 @@ PATTERNS.pulseRed = rainFactory({
   friendlyName: "Red Pulse",
   sortI: 3,
   baseAsBackground: true,
-  baseHue: .95,
-  hueVariance: .05,
+  baseHue: 0.95,
+  hueVariance: 0.05,
   whiteDecay: 0
 });
 
@@ -146,8 +146,8 @@ PATTERNS.pulseOrange = rainFactory({
   friendlyName: "Orange Pulse",
   sortI: 4,
   baseAsBackground: true,
-  baseHue: .13,
-  hueVariance: .13,
+  baseHue: 0.13,
+  hueVariance: 0.13,
   whiteDecay: 0
 });
 
@@ -155,8 +155,8 @@ PATTERNS.pulseGreen = rainFactory({
   friendlyName: "Green Pulse",
   sortI: 5,
   baseAsBackground: true,
-  baseHue: .3,
-  hueVariance: .15,
+  baseHue: 0.3,
+  hueVariance: 0.15,
   whiteDecay: 0
 });
 
@@ -164,8 +164,8 @@ PATTERNS.pulseAqua = rainFactory({
   friendlyName: "Aqua Pulse",
   sortI: 6,
   baseAsBackground: true,
-  baseHue: .5,
-  hueVariance: .15,
+  baseHue: 0.5,
+  hueVariance: 0.15,
   whiteDecay: 0
 });
 
@@ -173,8 +173,8 @@ PATTERNS.pulseBlue = rainFactory({
   friendlyName: "Blue Pulse",
   sortI: 7,
   baseAsBackground: true,
-  baseHue: .7,
-  hueVariance: .15,
+  baseHue: 0.7,
+  hueVariance: 0.15,
   whiteDecay: 0
 });
 
@@ -182,8 +182,8 @@ PATTERNS.pulsePurple = rainFactory({
   friendlyName: "Purple Pulse",
   sortI: 8,
   baseAsBackground: true,
-  baseHue: .85,
-  hueVariance: .14,
+  baseHue: 0.85,
+  hueVariance: 0.14,
   whiteDecay: 0
 });
 
